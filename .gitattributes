@@ -1,0 +1,4 @@
+# Shell scripts run on Linux runners: LF only.
+*.sh text eol=lf
+# Declared assets are hashed into manifest.json (ADR 0098 §5): their bytes never change on checkout.
+src/BoxedWine/wwwroot/** -text

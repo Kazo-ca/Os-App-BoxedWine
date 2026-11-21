@@ -1,0 +1,20 @@
+bin/
+obj/
+.vs/
+*.user
+*.suo
+.idea/
+TestResults/
+artifacts/
+
+# Private keys: never in the repository.
+*.pem
+
+
+# Local tooling of the Claude desktop app (launch configurations).
+.claude/
+
+# Coverage output of dotnet test (coverlet).
+coverage.json
+coverage.*.json
+coverage.cobertura.xml

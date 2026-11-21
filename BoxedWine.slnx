@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BoxedWine.Lib/BoxedWine.Lib.csproj" />
+    <Project Path="src/BoxedWine/BoxedWine.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/BoxedWine.Tests/BoxedWine.Tests.csproj" />
+  </Folder>
+</Solution>

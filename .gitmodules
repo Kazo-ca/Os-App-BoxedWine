@@ -1,0 +1,7 @@
+[submodule "external/KazoOs"]
+	path = external/KazoOs
+	url = https://github.com/Kazo-ca/Os.git
+	shallow = true
+[submodule "external/Os-x86"]
+	path = external/Os-x86
+	url = https://github.com/Kazo-ca/Os-x86.git

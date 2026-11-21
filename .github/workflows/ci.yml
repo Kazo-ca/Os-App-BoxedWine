@@ -1,0 +1,49 @@
+# Builds and tests the Release profile: the Kazo OS packages from nuget.org, at the version of the
+# submodule (ADR 0176 §4, §6 of Kazo). This is what the Kazo OS Store compiles.
+#
+# external/Os-x86 is checked out recursively: its OsX86.Interface project (the contracts Ix86)
+# reads the Kazo OS version of its own submodule, which must be the one of this repository.
+name: CI
+
+on:
+  push:
+    branches: [main, j0/base]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Check the Kazo OS submodule
+        run: bash .github/scripts/check-kazoos-submodule.sh
+
+      - name: Check that Os-x86 pins the same Kazo OS
+        run: bash .github/scripts/check-os-x86-submodule.sh
+
+      - name: Build (Release, packages)
+        run: dotnet build BoxedWine.slnx -c Release -warnaserror
+
+      - name: Check the generated manifest is committed
+        run: |
+          if ! git diff --quiet -- src/BoxedWine/manifest.json src/BoxedWine/localization; then
+            echo "::error::The build changed the generated manifest: commit src/BoxedWine/manifest.json and localization/."
+            git diff -- src/BoxedWine/manifest.json src/BoxedWine/localization
+            exit 1
+          fi
+
+      - name: Unit tests with coverage (80 % of lines on the C# of BoxedWine and BoxedWine.Lib)
+        run: >
+          dotnet test BoxedWine.slnx -c Release --no-build --filter "Category=unit"
+          -p:CollectCoverage=true "-p:Include=[BoxedWine]*%2c[BoxedWine.Lib]*"
+          -p:Threshold=80 -p:ThresholdType=line -p:ThresholdStat=total
