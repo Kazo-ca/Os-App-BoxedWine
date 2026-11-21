@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Button.Done" xml:space="preserve">
+    <value>Terminer</value>
+  </data>
+  <data name="Button.Interrupt" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="Button.Interrupt.Tooltip" xml:space="preserve">
+    <value>Envoie Ctrl+C au programme</value>
+  </data>
+  <data name="Button.Next" xml:space="preserve">
+    <value>Suivant</value>
+  </data>
+  <data name="Button.Open" xml:space="preserve">
+    <value>Ouvrir un programme…</value>
+  </data>
+  <data name="Button.Previous" xml:space="preserve">
+    <value>Précédent</value>
+  </data>
+  <data name="Button.Send" xml:space="preserve">
+    <value>Envoyer</value>
+  </data>
+  <data name="Button.Tutorial" xml:space="preserve">
+    <value>Tutoriel</value>
+  </data>
+  <data name="Console.AriaLabel" xml:space="preserve">
+    <value>Sortie du programme</value>
+  </data>
+  <data name="Console.Hint" xml:space="preserve">
+    <value>Fermer la fenêtre arrête le programme.</value>
+  </data>
+  <data name="Console.Input.AriaLabel" xml:space="preserve">
+    <value>Ligne à envoyer au programme</value>
+  </data>
+  <data name="Console.Input.Placeholder" xml:space="preserve">
+    <value>Tape une ligne, puis Entrée</value>
+  </data>
+  <data name="Dialog.Open.Title" xml:space="preserve">
+    <value>Ouvrir un programme</value>
+  </data>
+  <data name="Failure.Detail" xml:space="preserve">
+    <value>Détail : {0}</value>
+  </data>
+  <data name="Failure.Lost" xml:space="preserve">
+    <value>La machine virtuelle s'est arrêtée pendant que le programme tournait.</value>
+  </data>
+  <data name="Failure.MemoryBudget" xml:space="preserve">
+    <value>La machine n'a pas assez de mémoire libre pour démarrer une autre machine virtuelle. Ferme un programme d'Os-x86, puis réessaie.</value>
+  </data>
+  <data name="Failure.NotRunnable" xml:space="preserve">
+    <value>Ce programme ne peut pas encore être lancé.</value>
+  </data>
+  <data name="Failure.PermissionDenied" xml:space="preserve">
+    <value>BoxedWine n'a pas la permission de lancer des programmes dans Os-x86. Tu peux la lui rendre dans Paramètres ▸ Permissions.</value>
+  </data>
+  <data name="Failure.ReadFailed" xml:space="preserve">
+    <value>Le fichier n'a pas pu être lu.</value>
+  </data>
+  <data name="Failure.TooLarge" xml:space="preserve">
+    <value>Ce programme dépasse 256 Mio, la taille qu'Os-x86 copie dans une machine virtuelle.</value>
+  </data>
+  <data name="Failure.X86Error" xml:space="preserve">
+    <value>Os-x86 n'a pas pu lancer ce programme.</value>
+  </data>
+  <data name="Failure.X86Missing" xml:space="preserve">
+    <value>Os-x86 n'est pas installé ou il est désactivé : BoxedWine lance les programmes par lui. Demande à un administrateur de l'installer.</value>
+  </data>
+  <data name="Filter.Programs" xml:space="preserve">
+    <value>Programmes Windows et DOS</value>
+  </data>
+  <data name="Home.Body" xml:space="preserve">
+    <value>BoxedWine ouvre les programmes Windows (.exe, .bat, .cmd, .msi) et DOS (.com). Ils tournent dans une machine virtuelle d'Os-x86, jamais dans Kazo OS lui-même.
+
+Double-clique un programme dans l'Explorateur de fichiers, ou choisis « Ouvrir un programme… ».</value>
+  </data>
+  <data name="Home.Heading" xml:space="preserve">
+    <value>BoxedWine</value>
+  </data>
+  <data name="Status.Exited" xml:space="preserve">
+    <value>{0} s'est terminé avec le code {1}.</value>
+  </data>
+  <data name="Status.Failed" xml:space="preserve">
+    <value>{0} n'a pas été lancé.</value>
+  </data>
+  <data name="Status.Preparing" xml:space="preserve">
+    <value>Lecture de {0}…</value>
+  </data>
+  <data name="Status.Running" xml:space="preserve">
+    <value>{0} est en cours d'exécution</value>
+  </data>
+  <data name="Status.Starting" xml:space="preserve">
+    <value>Démarrage de {0} dans Os-x86… La première fois, Os-x86 télécharge son image : ça peut prendre une minute.</value>
+  </data>
+  <data name="Support.Batch" xml:space="preserve">
+    <value>Fichier de commandes Windows.</value>
+  </data>
+  <data name="Support.Console" xml:space="preserve">
+    <value>Programme console Windows.</value>
+  </data>
+  <data name="Support.Dos" xml:space="preserve">
+    <value>C'est un programme DOS. Pour l'instant, lance-le depuis le Terminal avec « x86 run &lt;fichier&gt; » : Os-x86 l'affiche dans le terminal. BoxedWine affichera les programmes DOS dans une prochaine version.</value>
+  </data>
+  <data name="Support.Installer" xml:space="preserve">
+    <value>C'est un paquet Windows Installer (.msi). Les installateurs ont besoin d'un affichage, qui arrive dans une prochaine version de BoxedWine.</value>
+  </data>
+  <data name="Support.Library" xml:space="preserve">
+    <value>C'est une bibliothèque Windows (DLL), pas un programme.</value>
+  </data>
+  <data name="Support.Linux" xml:space="preserve">
+    <value>C'est un programme Linux. Lance-le dans une machine virtuelle Linux d'Os-x86, avec « x86 shell » dans le Terminal.</value>
+  </data>
+  <data name="Support.Mismatch" xml:space="preserve">
+    <value>Le contenu du fichier ne correspond pas à son extension : BoxedWine refuse de le lancer.</value>
+  </data>
+  <data name="Support.OtherWindows" xml:space="preserve">
+    <value>Ce programme Windows n'est pas fait pour un processeur x86 32 bits, ou ni pour la console ni pour une fenêtre.</value>
+  </data>
+  <data name="Support.Unknown" xml:space="preserve">
+    <value>Os-x86 ne reconnaît pas ce fichier comme un programme.</value>
+  </data>
+  <data name="Support.Windowed" xml:space="preserve">
+    <value>C'est un programme Windows à fenêtres. BoxedWine lance pour l'instant les programmes console ; l'affichage des fenêtres Windows arrive dans une prochaine version.</value>
+  </data>
+  <data name="Support.Windows16" xml:space="preserve">
+    <value>C'est un programme Windows 16 bits. Il a besoin d'un affichage, qui arrive dans une prochaine version de BoxedWine.</value>
+  </data>
+  <data name="Support.Windows64" xml:space="preserve">
+    <value>C'est un programme Windows 64 bits : le processeur émulé par Os-x86 est 32 bits, il ne peut pas le faire tourner.</value>
+  </data>
+  <data name="Toolbar.AriaLabel" xml:space="preserve">
+    <value>Actions de BoxedWine</value>
+  </data>
+  <data name="Tutorial.Step1.Body" xml:space="preserve">
+    <value>BoxedWine ouvre les programmes Windows (.exe, .bat, .cmd, .msi) et DOS (.com) dans Kazo OS.
+
+Les programmes ne tournent pas dans Kazo lui-même : Os-x86 les fait tourner dans une machine virtuelle, avec ses propres permissions. BoxedWine est la fenêtre qui les affiche.</value>
+  </data>
+  <data name="Tutorial.Step1.Title" xml:space="preserve">
+    <value>Bienvenue dans BoxedWine</value>
+  </data>
+  <data name="Tutorial.Step2.Body" xml:space="preserve">
+    <value>Double-clique un fichier .exe dans l'Explorateur de fichiers, choisis « Ouvrir avec ▸ BoxedWine », ou ouvre-le depuis le Terminal avec « xdg-open ./setup.exe ». Le bouton « Ouvrir un programme… » fait la même chose.
+
+Pour l'instant, BoxedWine lance les programmes console : leur sortie s'affiche dans la fenêtre, et tu leur écris dans la ligne du bas. Ctrl+C interrompt le programme ; fermer la fenêtre l'arrête. La première fois, Os-x86 télécharge son image Windows : le démarrage prend alors une minute.</value>
+  </data>
+  <data name="Tutorial.Step2.Title" xml:space="preserve">
+    <value>Lancer un programme</value>
+  </data>
+  <data name="Tutorial.Step3.Body" xml:space="preserve">
+    <value>BoxedWine ne cherche pas tout seul les programmes que tu installes : c'est toi qui les ajoutes.
+
+Le menu « Ajouter une application à Kazo OS » te laissera choisir l'exécutable ou le raccourci (.lnk) d'un programme installé. Il recevra une entrée dans le menu Démarrer et, si tu veux, un raccourci sur le bureau. Ce menu arrive dans une prochaine version ; d'ici là, garde tes programmes dans tes fichiers et ouvre-les par un double-clic.
+
+Tu peux revoir ce tutoriel avec le bouton « Tutoriel ».</value>
+  </data>
+  <data name="Tutorial.Step3.Title" xml:space="preserve">
+    <value>Ajouter tes programmes à Kazo OS</value>
+  </data>
+  <data name="Tutorial.StepCount" xml:space="preserve">
+    <value>Étape {0} sur {1}</value>
+  </data>
+</root>

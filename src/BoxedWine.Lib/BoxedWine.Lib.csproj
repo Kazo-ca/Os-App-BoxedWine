@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsTrimmable>true</IsTrimmable>
+    <RootNamespace>BoxedWine.Lib</RootNamespace>
+    <!--
+      BwLib (plan §1.1): the Wine logic of BoxedWine on the client side, behind IBwLib. It depends on
+      Ix86 only (Os-x86.Interface), never on Kazo OS, so any app can embed it.
+    -->
+    <PackageId>BoxedWine.Lib</PackageId>
+    <Version>0.1.0-alpha</Version>
+    <Authors>Kazo</Authors>
+    <Description>The Wine logic of BoxedWine: what a Windows or DOS file is, whether Os-x86 can run it yet, and launching it through Ix86.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/Kazo-ca/Os-App-BoxedWine</RepositoryUrl>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Public API tracked per PR (plan §12): PublicAPI.Shipped.txt / PublicAPI.Unshipped.txt. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="4.14.0" PrivateAssets="all" />
+    <AdditionalFiles Include="PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <!--
+      Question 320 A: Os-x86 publishes no package yet, so its contracts come from the submodule
+      external/Os-x86 (pinned on a commit of its j0/base). Becomes a PackageReference to
+      Os-x86.Interface once it is published.
+    -->
+    <ProjectReference Include="..\..\external\Os-x86\src\OsX86.Interface\OsX86.Interface.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="BoxedWine.Tests" />
+  </ItemGroup>
+</Project>

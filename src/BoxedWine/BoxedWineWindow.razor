@@ -1,0 +1,70 @@
+@using Kazo.Os.AppSdk.Blazor
+@using Microsoft.AspNetCore.Components.Web
+@inherits WindowAppBase
+@implements IAsyncDisposable
+
+<div class="bw-root">
+    <div class="bw-toolbar" role="toolbar" aria-label="@L["Toolbar.AriaLabel"]">
+        <button id="bw-open" class="bw-btn" disabled="@Controller.IsBusy" @onclick="OpenProgramAsync">@L["Button.Open"]</button>
+        <button id="bw-tutorial" class="bw-btn" @onclick="Controller.ShowTutorial">@L["Button.Tutorial"]</button>
+        <span class="bw-status" role="status" aria-live="polite">@StatusText</span>
+    </div>
+
+    @if (Controller.TutorialStep is int step)
+    {
+        <section class="bw-tutorial" role="dialog" aria-modal="true" aria-labelledby="bw-tutorial-title">
+            <p class="bw-tutorial-count">@L["Tutorial.StepCount", step + 1, WindowController.TutorialSteps]</p>
+            <h2 id="bw-tutorial-title">@L[$"Tutorial.Step{step + 1}.Title"]</h2>
+            @foreach (string paragraph in Paragraphs($"Tutorial.Step{step + 1}.Body"))
+            {
+                <p>@paragraph</p>
+            }
+            <div class="bw-tutorial-actions">
+                <button id="bw-tutorial-previous" class="bw-btn" disabled="@(step == 0)" @onclick="Controller.PreviousStep">@L["Button.Previous"]</button>
+                @if (step + 1 < WindowController.TutorialSteps)
+                {
+                    <button id="bw-tutorial-next" class="bw-btn bw-primary" @onclick="Controller.NextStep">@L["Button.Next"]</button>
+                }
+                else
+                {
+                    <button id="bw-tutorial-done" class="bw-btn bw-primary" @onclick="Controller.FinishTutorialAsync">@L["Button.Done"]</button>
+                }
+            </div>
+        </section>
+    }
+    else if (Controller.Session is not { } session)
+    {
+        <section class="bw-home">
+            <h2>@L["Home.Heading"]</h2>
+            @foreach (string paragraph in Paragraphs("Home.Body"))
+            {
+                <p>@paragraph</p>
+            }
+        </section>
+    }
+    else
+    {
+        <section class="bw-session">
+            @if (session.Failure is { } failure)
+            {
+                <div class="bw-failure" role="alert">
+                    <p>@L[Controller.FailureKey(failure)]</p>
+                    <p class="bw-detail">@L["Failure.Detail", failure.Detail]</p>
+                </div>
+            }
+
+            <pre class="bw-console" aria-label="@L["Console.AriaLabel"]" aria-live="polite">@session.Transcript.Text</pre>
+
+            @if (session.AcceptsInput)
+            {
+                <form class="bw-input" @onsubmit="SendLineAsync">
+                    <input id="bw-line" class="bw-line" type="text" autocomplete="off" spellcheck="false"
+                           aria-label="@L["Console.Input.AriaLabel"]" placeholder="@L["Console.Input.Placeholder"]" @bind="_line" />
+                    <button id="bw-send" class="bw-btn" type="submit">@L["Button.Send"]</button>
+                    <button id="bw-interrupt" class="bw-btn" type="button" title="@L["Button.Interrupt.Tooltip"]" @onclick="InterruptAsync">@L["Button.Interrupt"]</button>
+                </form>
+                <p class="bw-hint">@L["Console.Hint"]</p>
+            }
+        </section>
+    }
+</div>
