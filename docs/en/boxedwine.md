@@ -100,31 +100,64 @@ with milestone 1, when `Ix86` has "run in the prefix".
 
 - `dotnet build BoxedWine.slnx -c Release -warnaserror` and `-c Debug` (Kazo from the sources of the
   submodule) without warnings.
-- `unit` tests (77): classification of programs, launch through a simulated `Ix86` (name, bytes,
+- `unit` tests (84): classification of programs, launch through a simulated `Ix86` (name, bytes,
   arguments, no VM nor prefix imposed, console size bounded), refusal before anything starts, Os-x86
-  missing, console (UTF-8 cut, carriage return, sequences of Wine, markup kept as text, bounds),
-  session (output, exit code, line and Ctrl+C, closing ends the program, VM lost, each failure of
-  Os-x86), bounded read of the file, window (tutorial before the program, program chosen during the
-  tutorial, a second program closes the first, texts), **the shipped manifest read by the real
-  catalog and file association resolver of Kazo 3.5.2**: the five extensions go to BoxedWine, the
-  only candidate, Os-x86 declares none, BoxedWine left out without Os-x86. Line coverage: 80.8 %
-  (BoxedWine.Lib 100 %).
+  missing, console (UTF-8 cut, carriage return, sequences of Wine, endless title, markup kept as text,
+  bounds), session (output, exit code, console released when the program ends, line and Ctrl+C,
+  window closed during the start, closing ends the program, VM lost, each failure of Os-x86), bounded
+  read of the file, window (tutorial before the program, program chosen during the tutorial, a second
+  program closes the first, texts), **the shipped manifest read by the real catalog and file
+  association resolver of Kazo 3.5.2**: the five extensions go to BoxedWine, the only candidate,
+  Os-x86 declares none, BoxedWine left out without Os-x86. Line coverage: 81.6 % (BoxedWine.Lib 100 %).
+- **End-to-end run in a real Kazo 3.5.2** (Release dev host with the Os-x86 Feature of `j0/base` and
+  BoxedWine, Wine pack 0.1.0 of work item 10 served locally, Chrome, guest session, Kazo in French),
+  with the dependency declared optional **for the run only** (see the second defect of Kazo below):
+  - `setup.exe` (the `osx86-hello.exe` of Os-x86) dropped in `/home/guest`; **double-click** in the
+    File Explorer → BoxedWine opens, tutorial first (three pages), then `GetServiceAsync<Ix86>()`
+    returns Os-x86, detection gives a console program, Os-x86 makes the `windows` VM, downloads the
+    pack, starts Wine: the window shows `osx86-hello windows=C:\windows user=osx86-default args=0` and
+    "setup.exe ended with code 7" (about 70 s, download included);
+  - `xdg-open /home/guest/setup.exe` in the Terminal → BoxedWine through the association;
+    `xdg-mime query filetype setup.exe` → `application/vnd.microsoft.portable-executable`;
+  - `boxedwine /home/guest/setup.exe --read` → a second window (one per launch), without the tutorial
+    (the per-user setting is written), arguments passed, a typed line reaches the program
+    (`osx86-hello read bonjour Kazo`, code 0); the Terminal waits for the window to close and returns 0;
+  - `./setup.exe` → "Permission denied", 126 (no route of the shell, see below);
+  - with every BoxedWine window closed, `x86 vm list` shows the `windows` VM stopped.
+
+  This run found two defects, fixed in the pull request: the console of a finished program stayed open
+  as long as its window did, and kept the VM running; the French texts used "tu" where Kazo uses
+  "vous".
 
 ## Not verified, and limits
 
+- **Two defects of Kazo keep BoxedWine from working as is** (question 321), in 3.5.2,
+  3.6.0-preview.1, `main` and `feature/base`:
+  1. the manifest generator drops the dependencies before it checks the permissions
+     (`AppDefinitionInspector.cs`, `CheckEntryPointKinds`) and refuses the permission of a Feature in
+     an app (KOSAPP0009); workaround in this repository: `build/FeaturePermissions.targets` adds
+     `x86.programs.launch` to `manifest.json`;
+  2. at launch, the lazy registry builds its discovery catalog with the manifest alone
+     (`BuildKnownLazyAppDescriptorRegistry.cs`, `DiscoveryManifestsOf`): an app with a **required**
+     dependency on a Feature is refused ("Required dependency 'ca.kazo.x86' is missing"), on a
+     double-click as from the menu, built into the host or installed from a package (same registry).
+     No workaround in this repository: the dependency stays required (ADR 0248); the run above made it
+     optional locally.
 - **The route of the shell**: `./setup.exe` typed in the Terminal does not reach BoxedWine yet. Kazo
-  3.5.2 does not ship the code of ADR 0251: the shell still reads the file as a script and answers
-  "cannot execute binary file" (126). BoxedWine already declares the `execute` action; the
-  demonstration "`./setup.exe` in the terminal reaches BoxedWine" waits for that version of Kazo.
-  Meanwhile: `xdg-open ./setup.exe` in the Terminal, or a double-click.
+  3.5.2 does not ship the code of ADR 0251: the shell refuses the file ("Permission denied", 126, or
+  "cannot execute binary file" with the execute bit). BoxedWine already declares the `execute`
+  action; the demonstration "`./setup.exe` in the terminal reaches BoxedWine" waits for that version
+  of Kazo. Meanwhile: `xdg-open ./setup.exe` in the Terminal, or a double-click.
 - **`boxedwine setup.exe`** (163 A): the Terminal waits for the window to close, but the console is in
   the window, not in the Terminal (question 325); the code returned to the shell is the window's (0, 1
   or 130), not the program's (limit of ADR 0251 §2, 110).
+- **Ctrl+C**: in the run, the button (the byte 0x03, as `x86 run` sends it) did not stop
+  `osx86-hello --wait` in two tries; closing the window did. The pack tried carries an older agent
+  (protocol 2) than `j0/base`; to redo with an up-to-date pack and to compare with `x86 run`.
+- **First typed line lost**: the first line sent right after "reading" was lost, the second arrived;
+  a known limit of the console of Wine in line mode (Os-x86, work item 10).
 - **Line-mode console**: no VT emulator (question 322); full-screen programs do not show correctly.
 - **Only console programs run** in milestone 0 (`Ix86.RunProgramAsync`); the rest is refused with its
   message.
-- **Defect of the manifest generator of Kazo** (question 321): the permission `x86.programs.launch` is
-  added to `manifest.json` by `build/FeaturePermissions.targets`, not by `BoxedWineApp`.
-- **An end-to-end run in a real Kazo** (host with Os-x86, Wine image, double-click): see the pull
-  request for its status.
-- Firefox, Safari and mobile are not tried.
+- Firefox, Safari and mobile are not tried; the dev host of the run is not in the repository (it only
+  works with the optional dependency until Kazo is fixed).

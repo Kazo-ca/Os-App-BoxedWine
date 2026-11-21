@@ -45,6 +45,8 @@ public sealed class ProgramSessionTests : IAsyncLifetime
 
         await Eventually.TrueAsync(() => _session.State == SessionState.Exited, "the program ends");
         Assert.Equal(7, _session.ExitCode);
+        // The console is released with the program, not with the window: the VM can stop (166 A).
+        Assert.True(_x86.Console.Disposed);
         Assert.Equal(["Hello from Wine"], _session.Transcript.Lines);
         Assert.False(_session.AcceptsInput);
     }
@@ -157,6 +159,62 @@ public sealed class ProgramSessionTests : IAsyncLifetime
 
         await Eventually.TrueAsync(() => _session.State == SessionState.Failed, "the loss is seen");
         Assert.Equal(FailureKind.Lost, _session.Failure?.Kind);
+    }
+
+    [Fact]
+    public async Task Closing_the_window_while_Os_x86_starts_the_program_ends_it_as_soon_as_it_arrives()
+    {
+        _x86.RunGate = new TaskCompletionSource();
+        Task start = StartAsync(Setup);
+        await Eventually.TrueAsync(() => _x86.Runs.Count == 1, "Os-x86 is asked");
+
+        await _session.DisposeAsync();
+        _x86.RunGate.SetResult();
+        await start;
+
+        Assert.True(_x86.Console.Disposed);
+        Assert.Equal(SessionState.Starting, _session.State);
+        Assert.False(_session.AcceptsInput);
+    }
+
+    [Fact]
+    public async Task An_unexpected_end_of_the_output_is_a_failure_not_a_frozen_console()
+    {
+        await StartAsync(Setup);
+
+        _x86.Console.Lose(new InvalidOperationException("relay broken"));
+
+        await Eventually.TrueAsync(() => _session.State == SessionState.Failed, "the failure is seen");
+        Assert.Equal(new SessionFailure(FailureKind.Lost, null, "relay broken"), _session.Failure);
+        Assert.True(_x86.Console.Disposed);
+    }
+
+    [Fact]
+    public async Task A_console_that_breaks_under_a_key_is_a_failure_of_the_window()
+    {
+        await StartAsync(Setup);
+        _x86.Console.WriteFailure = new X86Exception(X86ErrorCodes.AgentLost, "agent lost");
+
+        await _session.SendLineAsync("x");
+
+        Assert.Equal(SessionState.Failed, _session.State);
+        Assert.Equal(FailureKind.Lost, _session.Failure?.Kind);
+    }
+
+    [Fact]
+    public async Task A_read_error_of_the_file_is_reported()
+    {
+        await using var session = new ProgramSession(new BwLib(_ => ValueTask.FromResult<Ix86?>(_x86)), new FailingFiles());
+
+        await session.StartAsync(VirtualPath.Parse(Setup), [], 80, 25, CancellationToken.None);
+
+        Assert.Equal(FailureKind.ReadFailed, session.Failure?.Kind);
+    }
+
+    private sealed class FailingFiles : IProgramFiles
+    {
+        public ValueTask<ProgramFile> ReadAsync(VirtualPath path, CancellationToken cancellationToken) =>
+            ValueTask.FromException<ProgramFile>(new IOException("disk gone"));
     }
 
     [Fact]

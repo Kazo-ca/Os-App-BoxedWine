@@ -21,13 +21,18 @@ internal sealed class ConsoleTranscript
 
     private const int TabWidth = 8;
     private const int MaxSequenceLength = 32;
+    private const int MaxOscLength = 256;
     private const char Escape = '\u001b';
     private const char Bell = '\u0007';
+    private const char Cancel = '\u0018';
+    private const char Substitute = '\u001a';
 
     private readonly Decoder _decoder = new UTF8Encoding(false, false).GetDecoder();
     private readonly LinkedList<string> _lines = new();
     private readonly StringBuilder _current = new();
     private readonly StringBuilder _sequence = new();
+    private string? _text;
+    private int _oscLength;
     private int _cursor;
     private EscapeState _state;
 
@@ -48,17 +53,23 @@ internal sealed class ConsoleTranscript
     public string CurrentLine => _current.ToString();
 
     /// <summary>Every line, separated by line feeds, the current one last.</summary>
+    /// <remarks>Built once per change, not at every render.</remarks>
     public string Text
     {
         get
         {
-            var text = new StringBuilder();
-            foreach (string line in _lines)
+            if (_text is null)
             {
-                text.Append(line).Append('\n');
+                var text = new StringBuilder();
+                foreach (string line in _lines)
+                {
+                    text.Append(line).Append('\n');
+                }
+
+                _text = text.Append(_current).ToString();
             }
 
-            return text.Append(_current).ToString();
+            return _text;
         }
     }
 
@@ -71,6 +82,7 @@ internal sealed class ConsoleTranscript
             return;
         }
 
+        _text = null;
         char[] chars = new char[_decoder.GetCharCount(bytes, flush: false)];
         int count = _decoder.GetChars(bytes, chars, flush: false);
         foreach (char c in chars.AsSpan(0, count))
@@ -84,6 +96,7 @@ internal sealed class ConsoleTranscript
     public void AppendNote(string line)
     {
         ArgumentNullException.ThrowIfNull(line);
+        _text = null;
         if (_current.Length > 0)
         {
             NewLine();
@@ -115,9 +128,20 @@ internal sealed class ConsoleTranscript
                     _ => EscapeState.None,
                 };
                 _sequence.Clear();
+                _oscLength = 0;
                 return;
             case EscapeState.EscapeIntermediate:
                 _state = c is >= ' ' and <= '/' ? EscapeState.EscapeIntermediate : EscapeState.None;
+                return;
+            case EscapeState.Csi when char.IsControl(c):
+                // A control character inside a sequence ends it: ESC starts a new one, CAN and SUB
+                // abort it, anything else (a line feed) is written as usual.
+                _state = EscapeState.None;
+                if (c is not Cancel and not Substitute)
+                {
+                    FeedPlain(c);
+                }
+
                 return;
             case EscapeState.Csi:
                 if (c is >= '@' and <= '~')
@@ -132,10 +156,13 @@ internal sealed class ConsoleTranscript
 
                 return;
             case EscapeState.Osc:
+                // A title that never ends would hide everything after it: it ends at BEL, at ST,
+                // at CAN or SUB, or after MaxOscLength characters.
                 _state = c switch
                 {
-                    Bell => EscapeState.None,
+                    Bell or Cancel or Substitute => EscapeState.None,
                     Escape => EscapeState.OscEscape,
+                    _ when ++_oscLength > MaxOscLength => EscapeState.None,
                     _ => EscapeState.Osc,
                 };
                 return;

@@ -102,32 +102,68 @@ bibliothèque viendront au jalon 1, quand `Ix86` aura « exécuter dans le préf
 
 - `dotnet build BoxedWine.slnx -c Release -warnaserror` et `-c Debug` (Kazo depuis les sources du
   sous-module) sans avertissement.
-- Tests `unit` (77) : classement des programmes, lancement par un `Ix86` simulé (nom, octets,
+- Tests `unit` (84) : classement des programmes, lancement par un `Ix86` simulé (nom, octets,
   arguments, ni VM ni préfixe imposés, taille de la console bornée), refus avant tout démarrage,
-  Os-x86 absent, console (UTF-8 coupé, retour chariot, séquences de Wine, balisage gardé en texte,
-  bornes), session (sortie, code de sortie, ligne et Ctrl+C, fermeture qui arrête le programme, VM
-  perdue, chaque échec d'Os-x86), lecture bornée du fichier, fenêtre (tutoriel avant le programme,
-  programme choisi pendant le tutoriel, second programme qui ferme le premier, textes), **manifeste
-  livré relu par le catalogue et le résolveur d'associations réels de Kazo 3.5.2** : les cinq
-  extensions vont à BoxedWine, seul candidat, Os-x86 n'en déclare aucune, BoxedWine écarté sans
-  Os-x86. Couverture des lignes : 80,8 % (BoxedWine.Lib 100 %).
+  Os-x86 absent, console (UTF-8 coupé, retour chariot, séquences de Wine, titre sans fin, balisage
+  gardé en texte, bornes), session (sortie, code de sortie, console libérée à la fin du programme,
+  ligne et Ctrl+C, fenêtre fermée pendant le démarrage, fermeture qui arrête le programme, VM perdue,
+  chaque échec d'Os-x86), lecture bornée du fichier, fenêtre (tutoriel avant le programme, programme
+  choisi pendant le tutoriel, second programme qui ferme le premier, textes), **manifeste livré relu
+  par le catalogue et le résolveur d'associations réels de Kazo 3.5.2** : les cinq extensions vont à
+  BoxedWine, seul candidat, Os-x86 n'en déclare aucune, BoxedWine écarté sans Os-x86. Couverture des
+  lignes : 81,6 % (BoxedWine.Lib 100 %).
+- **Essai de bout en bout dans un vrai Kazo 3.5.2** (hôte de développement en Release avec la Feature
+  Os-x86 de `j0/base` et BoxedWine, pack Wine 0.1.0 du chantier 10 servi en local, Chrome, session
+  invitée, Kazo en français), avec la dépendance déclarée facultative **le temps de l'essai** (voir le
+  second défaut de Kazo plus bas) :
+  - `setup.exe` (le `osx86-hello.exe` d'Os-x86) déposé dans `/home/guest` ; **double-clic** dans
+    l'Explorateur de fichiers → BoxedWine s'ouvre, tutoriel d'abord (trois pages), puis
+    `GetServiceAsync<Ix86>()` rend Os-x86, la détection donne un programme console, Os-x86 crée la VM
+    `windows`, télécharge le pack, démarre Wine : la fenêtre affiche
+    `osx86-hello windows=C:\windows user=osx86-default args=0` et « setup.exe s'est terminé avec le
+    code 7 » (environ 70 s, téléchargement compris) ;
+  - `xdg-open /home/guest/setup.exe` au Terminal → BoxedWine par l'association ;
+    `xdg-mime query filetype setup.exe` → `application/vnd.microsoft.portable-executable` ;
+  - `boxedwine /home/guest/setup.exe --read` → seconde fenêtre (une par lancement), sans tutoriel (le
+    réglage par usager est écrit), arguments transmis, une ligne tapée arrive au programme
+    (`osx86-hello read bonjour Kazo`, code 0) ; le Terminal attend la fermeture de la fenêtre et rend 0 ;
+  - `./setup.exe` → « Permission refusée », 126 (route du shell absente, voir plus bas) ;
+  - toutes les fenêtres BoxedWine fermées, `x86 vm list` montre la VM `windows` arrêtée.
+
+  Cet essai a trouvé deux défauts, corrigés dans la PR : la console d'un programme terminé restait
+  ouverte tant que la fenêtre l'était, et gardait la VM en marche ; les textes français tutoyaient
+  alors que Kazo vouvoie.
 
 ## Pas vérifié, et limites
 
+- **Deux défauts de Kazo empêchent BoxedWine de fonctionner tel quel** (question 321), présents dans
+  3.5.2, 3.6.0-preview.1, `main` et `feature/base` :
+  1. le générateur de manifeste retire les dépendances avant de vérifier les permissions
+     (`AppDefinitionInspector.cs`, `CheckEntryPointKinds`) et refuse la permission d'une Feature dans
+     une app (KOSAPP0009) ; contournement dans ce dépôt : `build/FeaturePermissions.targets` ajoute
+     `x86.programs.launch` au `manifest.json` ;
+  2. au lancement, le registre paresseux construit son catalogue de découverte avec le manifeste seul
+     (`BuildKnownLazyAppDescriptorRegistry.cs`, `DiscoveryManifestsOf`) : une app qui dépend
+     **obligatoirement** d'une Feature est refusée (« Required dependency 'ca.kazo.x86' is missing »),
+     au double-clic comme au menu, qu'elle soit intégrée à l'hôte ou installée par paquet (même
+     registre). Pas de contournement dans ce dépôt : la dépendance reste obligatoire (ADR 0248) ;
+     l'essai ci-dessus l'a rendue facultative localement.
 - **La route du shell** : `./setup.exe` tapé au Terminal n'arrive pas encore à BoxedWine. Kazo 3.5.2
-  ne publie pas le code de l'ADR 0251 : le shell lit encore le fichier comme un script et rend
-  « cannot execute binary file » (126). BoxedWine déclare déjà l'action `execute` ; la démonstration
-  « `./setup.exe` au terminal arrive dans BoxedWine » attend cette version de Kazo. En attendant :
-  `xdg-open ./setup.exe` au Terminal, ou le double-clic.
+  ne publie pas le code de l'ADR 0251 : le shell refuse le fichier (« Permission refusée », 126, ou
+  « cannot execute binary file » avec le bit d'exécution). BoxedWine déclare déjà l'action `execute` ;
+  la démonstration « `./setup.exe` au terminal arrive dans BoxedWine » attend cette version de Kazo.
+  En attendant : `xdg-open ./setup.exe` au Terminal, ou le double-clic.
 - **`boxedwine setup.exe`** (163 A) : le Terminal attend la fermeture de la fenêtre, mais la console
   est dans la fenêtre, pas dans le Terminal (question 325) ; le code rendu au shell est celui de la
   fenêtre (0, 1 ou 130), pas celui du programme (limite de l'ADR 0251 §2, 110).
+- **Ctrl+C** : dans l'essai, le bouton (l'octet 0x03, comme `x86 run`) n'a pas arrêté
+  `osx86-hello --wait` en deux essais ; fermer la fenêtre l'a arrêté. Le pack essayé porte un agent
+  plus ancien (protocole 2) que `j0/base` ; à refaire avec un pack à jour et à comparer avec `x86 run`.
+- **Première ligne tapée perdue** : la première ligne envoyée juste après « reading » s'est perdue,
+  la seconde est arrivée ; limite connue de la console de Wine en mode ligne (Os-x86, chantier 10).
 - **Console en mode ligne** : pas d'émulateur VT (question 322) ; les programmes plein écran ne
   s'affichent pas correctement.
 - **Seuls les programmes console tournent** au jalon 0 (`Ix86.RunProgramAsync`) ; le reste est
   refusé avec son message.
-- **Défaut du générateur de manifeste de Kazo** (question 321) : la permission `x86.programs.launch`
-  est ajoutée au `manifest.json` par `build/FeaturePermissions.targets`, pas par `BoxedWineApp`.
-- **Un essai de bout en bout dans un vrai Kazo** (hôte avec Os-x86, image Wine, double-clic) : voir
-  la PR pour son état.
-- Firefox, Safari et le mobile ne sont pas essayés.
+- Firefox, Safari et le mobile ne sont pas essayés ; l'hôte de développement de l'essai n'est pas
+  dans le dépôt (il ne marche qu'avec la dépendance facultative tant que Kazo n'est pas corrigé).

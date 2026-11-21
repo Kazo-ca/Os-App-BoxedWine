@@ -29,6 +29,9 @@ internal sealed class WindowController(Func<ProgramSession> newSession, ITutoria
     /// <summary>The height of the console of a program.</summary>
     public const int ConsoleRows = 25;
 
+    // Opening, replacing and closing a program never interleave: a session is made and kept, or
+    // closed, under this gate; its start (VM boot, download) runs outside it.
+    private readonly SemaphoreSlim _gate = new(1, 1);
     private (VirtualPath Path, IReadOnlyList<string> Arguments)? _pending;
     private bool _disposed;
 
@@ -109,13 +112,21 @@ internal sealed class WindowController(Func<ProgramSession> newSession, ITutoria
     /// <summary>Closes the console of the program, which ends it.</summary>
     public async ValueTask DisposeAsync()
     {
-        if (_disposed)
+        await _gate.WaitAsync().ConfigureAwait(false);
+        try
         {
-            return;
-        }
+            if (_disposed)
+            {
+                return;
+            }
 
-        _disposed = true;
-        await CloseSessionAsync().ConfigureAwait(false);
+            _disposed = true;
+            await CloseSessionAsync().ConfigureAwait(false);
+        }
+        finally
+        {
+            _gate.Release();
+        }
     }
 
     private void Step(int step)
@@ -126,16 +137,28 @@ internal sealed class WindowController(Func<ProgramSession> newSession, ITutoria
 
     private async Task StartPendingAsync()
     {
-        if (_pending is not { } pending || _disposed)
+        ProgramSession session;
+        (VirtualPath Path, IReadOnlyList<string> Arguments) pending;
+        await _gate.WaitAsync().ConfigureAwait(false);
+        try
         {
-            return;
+            if (_pending is not { } next || _disposed)
+            {
+                return;
+            }
+
+            pending = next;
+            _pending = null;
+            await CloseSessionAsync().ConfigureAwait(false);
+            session = newSession();
+            session.Changed += OnSessionChanged;
+            Session = session;
+        }
+        finally
+        {
+            _gate.Release();
         }
 
-        _pending = null;
-        await CloseSessionAsync().ConfigureAwait(false);
-        ProgramSession session = newSession();
-        session.Changed += OnSessionChanged;
-        Session = session;
         Changed?.Invoke();
         await session.StartAsync(pending.Path, pending.Arguments, ConsoleColumns, ConsoleRows, CancellationToken.None).ConfigureAwait(false);
     }

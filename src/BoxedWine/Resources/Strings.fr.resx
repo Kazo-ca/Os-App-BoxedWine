@@ -46,7 +46,7 @@
     <value>Ligne à envoyer au programme</value>
   </data>
   <data name="Console.Input.Placeholder" xml:space="preserve">
-    <value>Tape une ligne, puis Entrée</value>
+    <value>Tapez une ligne, puis Entrée</value>
   </data>
   <data name="Dialog.Open.Title" xml:space="preserve">
     <value>Ouvrir un programme</value>
@@ -58,13 +58,13 @@
     <value>La machine virtuelle s'est arrêtée pendant que le programme tournait.</value>
   </data>
   <data name="Failure.MemoryBudget" xml:space="preserve">
-    <value>La machine n'a pas assez de mémoire libre pour démarrer une autre machine virtuelle. Ferme un programme d'Os-x86, puis réessaie.</value>
+    <value>La machine n'a pas assez de mémoire libre pour démarrer une autre machine virtuelle. Fermez un programme d'Os-x86, puis réessayez.</value>
   </data>
   <data name="Failure.NotRunnable" xml:space="preserve">
     <value>Ce programme ne peut pas encore être lancé.</value>
   </data>
   <data name="Failure.PermissionDenied" xml:space="preserve">
-    <value>BoxedWine n'a pas la permission de lancer des programmes dans Os-x86. Tu peux la lui rendre dans Paramètres ▸ Permissions.</value>
+    <value>BoxedWine n'a pas la permission de lancer des programmes dans Os-x86. Vous pouvez la lui rendre dans Paramètres ▸ Permissions.</value>
   </data>
   <data name="Failure.ReadFailed" xml:space="preserve">
     <value>Le fichier n'a pas pu être lu.</value>
@@ -76,7 +76,7 @@
     <value>Os-x86 n'a pas pu lancer ce programme.</value>
   </data>
   <data name="Failure.X86Missing" xml:space="preserve">
-    <value>Os-x86 n'est pas installé ou il est désactivé : BoxedWine lance les programmes par lui. Demande à un administrateur de l'installer.</value>
+    <value>Os-x86 n'est pas installé ou il est désactivé : BoxedWine lance les programmes par lui. Demandez à un administrateur de l'installer.</value>
   </data>
   <data name="Filter.Programs" xml:space="preserve">
     <value>Programmes Windows et DOS</value>
@@ -84,7 +84,7 @@
   <data name="Home.Body" xml:space="preserve">
     <value>BoxedWine ouvre les programmes Windows (.exe, .bat, .cmd, .msi) et DOS (.com). Ils tournent dans une machine virtuelle d'Os-x86, jamais dans Kazo OS lui-même.
 
-Double-clique un programme dans l'Explorateur de fichiers, ou choisis « Ouvrir un programme… ».</value>
+Double-cliquez un programme dans l'Explorateur de fichiers, ou choisissez « Ouvrir un programme… ».</value>
   </data>
   <data name="Home.Heading" xml:space="preserve">
     <value>BoxedWine</value>
@@ -111,7 +111,7 @@ Double-clique un programme dans l'Explorateur de fichiers, ou choisis « Ouvrir 
     <value>Programme console Windows.</value>
   </data>
   <data name="Support.Dos" xml:space="preserve">
-    <value>C'est un programme DOS. Pour l'instant, lance-le depuis le Terminal avec « x86 run &lt;fichier&gt; » : Os-x86 l'affiche dans le terminal. BoxedWine affichera les programmes DOS dans une prochaine version.</value>
+    <value>C'est un programme DOS. Pour l'instant, lancez-le depuis le Terminal avec « x86 run &lt;fichier&gt; » : Os-x86 l'affiche dans le terminal. BoxedWine affichera les programmes DOS dans une prochaine version.</value>
   </data>
   <data name="Support.Installer" xml:space="preserve">
     <value>C'est un paquet Windows Installer (.msi). Les installateurs ont besoin d'un affichage, qui arrive dans une prochaine version de BoxedWine.</value>
@@ -120,7 +120,7 @@ Double-clique un programme dans l'Explorateur de fichiers, ou choisis « Ouvrir 
     <value>C'est une bibliothèque Windows (DLL), pas un programme.</value>
   </data>
   <data name="Support.Linux" xml:space="preserve">
-    <value>C'est un programme Linux. Lance-le dans une machine virtuelle Linux d'Os-x86, avec « x86 shell » dans le Terminal.</value>
+    <value>C'est un programme Linux. Lancez-le dans une machine virtuelle Linux d'Os-x86, avec « x86 shell » dans le Terminal.</value>
   </data>
   <data name="Support.Mismatch" xml:space="preserve">
     <value>Le contenu du fichier ne correspond pas à son extension : BoxedWine refuse de le lancer.</value>
@@ -152,22 +152,22 @@ Les programmes ne tournent pas dans Kazo lui-même : Os-x86 les fait tourner dan
     <value>Bienvenue dans BoxedWine</value>
   </data>
   <data name="Tutorial.Step2.Body" xml:space="preserve">
-    <value>Double-clique un fichier .exe dans l'Explorateur de fichiers, choisis « Ouvrir avec ▸ BoxedWine », ou ouvre-le depuis le Terminal avec « xdg-open ./setup.exe ». Le bouton « Ouvrir un programme… » fait la même chose.
+    <value>Double-cliquez un fichier .exe dans l'Explorateur de fichiers, choisissez « Ouvrir avec ▸ BoxedWine », ou ouvrez-le depuis le Terminal avec « xdg-open ./setup.exe ». Le bouton « Ouvrir un programme… » fait la même chose.
 
-Pour l'instant, BoxedWine lance les programmes console : leur sortie s'affiche dans la fenêtre, et tu leur écris dans la ligne du bas. Ctrl+C interrompt le programme ; fermer la fenêtre l'arrête. La première fois, Os-x86 télécharge son image Windows : le démarrage prend alors une minute.</value>
+Pour l'instant, BoxedWine lance les programmes console : leur sortie s'affiche dans la fenêtre, et vous leur écrivez dans la ligne du bas. Ctrl+C interrompt le programme ; fermer la fenêtre l'arrête. La première fois, Os-x86 télécharge son image Windows : le démarrage prend alors une minute.</value>
   </data>
   <data name="Tutorial.Step2.Title" xml:space="preserve">
     <value>Lancer un programme</value>
   </data>
   <data name="Tutorial.Step3.Body" xml:space="preserve">
-    <value>BoxedWine ne cherche pas tout seul les programmes que tu installes : c'est toi qui les ajoutes.
+    <value>BoxedWine ne cherche pas tout seul les programmes que vous installez : c'est vous qui les ajoutez.
 
-Le menu « Ajouter une application à Kazo OS » te laissera choisir l'exécutable ou le raccourci (.lnk) d'un programme installé. Il recevra une entrée dans le menu Démarrer et, si tu veux, un raccourci sur le bureau. Ce menu arrive dans une prochaine version ; d'ici là, garde tes programmes dans tes fichiers et ouvre-les par un double-clic.
+Le menu « Ajouter une application à Kazo OS » vous laissera choisir l'exécutable ou le raccourci (.lnk) d'un programme installé. Il recevra une entrée dans le menu Démarrer et, si vous le voulez, un raccourci sur le bureau. Ce menu arrive dans une prochaine version ; d'ici là, gardez vos programmes dans vos fichiers et ouvrez-les par un double-clic.
 
-Tu peux revoir ce tutoriel avec le bouton « Tutoriel ».</value>
+Vous pouvez revoir ce tutoriel avec le bouton « Tutoriel ».</value>
   </data>
   <data name="Tutorial.Step3.Title" xml:space="preserve">
-    <value>Ajouter tes programmes à Kazo OS</value>
+    <value>Ajouter vos programmes à Kazo OS</value>
   </data>
   <data name="Tutorial.StepCount" xml:space="preserve">
     <value>Étape {0} sur {1}</value>

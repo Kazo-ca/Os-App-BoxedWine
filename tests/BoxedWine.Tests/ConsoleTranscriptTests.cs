@@ -64,6 +64,37 @@ public sealed class ConsoleTranscriptTests
     }
 
     [Fact]
+    public void A_title_that_never_ends_does_not_hide_what_follows()
+    {
+        Feed("\u001b]0;" + new string('t', 300) + "visible");
+
+        Assert.EndsWith("visible", _transcript.CurrentLine, StringComparison.Ordinal);
+        // The first 256 characters of the title are read as the title, the rest is written.
+        Assert.True(_transcript.CurrentLine.Length < 300 - 200, _transcript.CurrentLine);
+    }
+
+    [Fact]
+    public void Cancel_and_control_characters_end_a_sequence()
+    {
+        Feed("\u001b]2;t\u0018a\u001b[1\u001ab\u001b[3\nc\u001b[2\u001b[1Cd");
+
+        Assert.Equal(["ab"], _transcript.Lines);
+        Assert.Equal("c d", _transcript.CurrentLine);
+    }
+
+    [Fact]
+    public void The_text_follows_every_change()
+    {
+        Feed("a");
+        Assert.Equal("a", _transcript.Text);
+
+        Feed("b\n");
+        _transcript.AppendNote("end");
+
+        Assert.Equal("ab\nend\n", _transcript.Text);
+    }
+
+    [Fact]
     public void Backspace_tab_and_control_characters()
     {
         Feed("ab\bc\tz\u0001\u0007");

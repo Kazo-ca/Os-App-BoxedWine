@@ -59,7 +59,20 @@ public partial class BoxedWineWindow : WindowAppBase, IAsyncDisposable
         return controller;
     }
 
-    private void OnChanged() => _ = InvokeAsync(StateHasChanged);
+    private void OnChanged() => _ = RenderAsync();
+
+    /// <summary>Renders after a change raised on any thread; a change after the window closed is dropped.</summary>
+    private async Task RenderAsync()
+    {
+        try
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (ObjectDisposedException)
+        {
+            // The renderer is gone with the window: nothing left to show.
+        }
+    }
 
     private async Task OpenProgramAsync()
     {

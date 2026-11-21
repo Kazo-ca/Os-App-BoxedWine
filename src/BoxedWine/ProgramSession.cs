@@ -71,6 +71,7 @@ internal sealed class ProgramSession(IBwLib bwLib, IProgramFiles files) : IAsync
 {
     private readonly CancellationTokenSource _stop = new();
     private IVmConsole? _console;
+    private readonly Lock _gate = new();
     private Task? _pump;
     private bool _disposed;
 
@@ -133,11 +134,18 @@ internal sealed class ProgramSession(IBwLib bwLib, IProgramFiles files) : IAsync
             }
 
             SetState(SessionState.Starting);
-            _console = await bwLib.LaunchAsync(
+            IVmConsole console = await bwLib.LaunchAsync(
                 new BwLaunch { FileName = file.Name, Content = file.Content, Arguments = arguments, Columns = columns, Rows = rows },
                 linked.Token).ConfigureAwait(false);
+            if (!Attach(console))
+            {
+                // The window closed while Os-x86 was starting the program: end it at once.
+                await console.DisposeAsync().ConfigureAwait(false);
+                return;
+            }
+
             SetState(SessionState.Running);
-            _pump = PumpAsync(_console, _stop.Token);
+            _pump = PumpAsync(console, _stop.Token);
         }
         catch (OperationCanceledException) when (_stop.IsCancellationRequested)
         {
@@ -171,16 +179,26 @@ internal sealed class ProgramSession(IBwLib bwLib, IProgramFiles files) : IAsync
     }
 
     /// <summary>Closes the console, which ends the program and releases the VM.</summary>
+    /// <remarks>
+    /// The source of the stop token is cancelled, never disposed: a start still in flight reads it,
+    /// and a console Os-x86 hands back after the close is ended at once (<see cref="Attach"/>).
+    /// </remarks>
     public async ValueTask DisposeAsync()
     {
-        if (_disposed)
+        IVmConsole? console;
+        lock (_gate)
         {
-            return;
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+            console = _console;
         }
 
-        _disposed = true;
         await _stop.CancelAsync().ConfigureAwait(false);
-        if (_console is { } console)
+        if (console is not null)
         {
             await console.DisposeAsync().ConfigureAwait(false);
         }
@@ -189,8 +207,6 @@ internal sealed class ProgramSession(IBwLib bwLib, IProgramFiles files) : IAsync
         {
             await pump.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
         }
-
-        _stop.Dispose();
     }
 
     /// <summary>The failure an exception of a launch means, or <see langword="null"/> for a bug (rethrown).</summary>
@@ -204,8 +220,24 @@ internal sealed class ProgramSession(IBwLib bwLib, IProgramFiles files) : IAsync
         X86Exception { Code: X86ErrorCodes.AgentLost } e => new(FailureKind.Lost, e.Code, e.Message),
         X86Exception e => new(FailureKind.X86Error, e.Code, e.Message),
         UnauthorizedAccessException e => new(FailureKind.PermissionDenied, null, e.Message),
+        IOException e => new(FailureKind.ReadFailed, null, e.Message),
         _ => null,
     };
+
+    /// <summary>Keeps the console of the program, unless the session was closed meanwhile.</summary>
+    private bool Attach(IVmConsole console)
+    {
+        lock (_gate)
+        {
+            if (_disposed)
+            {
+                return false;
+            }
+
+            _console = console;
+            return true;
+        }
+    }
 
     private async Task PumpAsync(IVmConsole console, CancellationToken cancellationToken)
     {
@@ -218,16 +250,40 @@ internal sealed class ProgramSession(IBwLib bwLib, IProgramFiles files) : IAsync
             }
 
             ExitCode = await console.Exited.WaitAsync(cancellationToken).ConfigureAwait(false);
+            await ReleaseConsoleAsync().ConfigureAwait(false);
             SetState(SessionState.Exited);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             // The window closed: the console is disposed with it.
         }
-        catch (Exception exception) when (Describe(exception) is { } failure)
+        catch (Exception exception) when (exception is not OutOfMemoryException)
         {
+            // Whatever ends the relay ends the console for the user: the window says so instead of
+            // staying "running" with input that goes nowhere.
+            SessionFailure failure = Describe(exception) ?? new SessionFailure(FailureKind.Lost, null, exception.Message);
             Failure = failure with { Kind = failure.Kind == FailureKind.X86Error ? FailureKind.Lost : failure.Kind };
+            await ReleaseConsoleAsync().ConfigureAwait(false);
             SetState(SessionState.Failed);
+        }
+    }
+
+    /// <summary>
+    /// Closes the console as soon as the program has ended: the console is an application of the
+    /// VM (166 A), so a window left open on a finished program must not keep the VM running.
+    /// </summary>
+    private async ValueTask ReleaseConsoleAsync()
+    {
+        IVmConsole? console;
+        lock (_gate)
+        {
+            console = _console;
+            _console = null;
+        }
+
+        if (console is not null)
+        {
+            await console.DisposeAsync().ConfigureAwait(false);
         }
     }
 
@@ -240,6 +296,12 @@ internal sealed class ProgramSession(IBwLib bwLib, IProgramFiles files) : IAsync
         catch (X86Exception exception) when (exception.Code == X86ErrorCodes.ConsoleClosed)
         {
             // The program ended between the key and its delivery: the pump reports the exit code.
+        }
+        catch (X86Exception exception)
+        {
+            // The console broke (agent lost, VM stopped): the window shows it, never Blazor's error.
+            Failure = new SessionFailure(FailureKind.Lost, exception.Code, exception.Message);
+            SetState(SessionState.Failed);
         }
         catch (OperationCanceledException) when (_stop.IsCancellationRequested)
         {

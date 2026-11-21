@@ -32,10 +32,18 @@ internal sealed class FakeX86 : Ix86
         return ValueTask.FromResult(Detection);
     }
 
-    public ValueTask<IVmConsole> RunProgramAsync(ProgramRunOptions options, CancellationToken cancellationToken)
+    /// <summary>When set, the launch waits for it, as Os-x86 does while the VM boots (and ignores the cancellation).</summary>
+    public TaskCompletionSource? RunGate { get; set; }
+
+    public async ValueTask<IVmConsole> RunProgramAsync(ProgramRunOptions options, CancellationToken cancellationToken)
     {
         Runs.Add(options);
-        return RunFailure is { } failure ? ValueTask.FromException<IVmConsole>(failure) : ValueTask.FromResult<IVmConsole>(Console);
+        if (RunGate is { } gate)
+        {
+            await gate.Task;
+        }
+
+        return RunFailure is { } failure ? throw failure : Console;
     }
 
     public ValueTask<IReadOnlyList<VmSummary>> GetVmsAsync(CancellationToken cancellationToken) => throw new NotSupportedException();

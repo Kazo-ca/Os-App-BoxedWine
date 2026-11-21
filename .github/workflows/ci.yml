@@ -13,9 +13,14 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,8 +41,10 @@ jobs:
 
       - name: Check the generated manifest is committed
         run: |
-          if ! git diff --quiet -- src/BoxedWine/manifest.json src/BoxedWine/localization; then
+          changed="$(git status --porcelain -- src/BoxedWine/manifest.json src/BoxedWine/localization)"
+          if [[ -n "$changed" ]]; then
             echo "::error::The build changed the generated manifest: commit src/BoxedWine/manifest.json and localization/."
+            echo "$changed"
             git diff -- src/BoxedWine/manifest.json src/BoxedWine/localization
             exit 1
           fi
