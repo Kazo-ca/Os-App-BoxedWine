@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="BoxedWine">
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="#5b1a3a"/>
+  <path d="M14 26l18-9 18 9v20l-18 9-18-9z" fill="#c9a27a"/>
+  <path d="M14 26l18 9 18-9M32 35v20" fill="none" stroke="#7a4f2c" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M26 12h12l-1 7a5 5 0 0 1-10 0z" fill="#f4e9ee"/>
+  <path d="M27.2 15h9.6l-.5 3.6a4.3 4.3 0 0 1-8.6 0z" fill="#b3204f"/>
+  <path d="M32 24v4M28.5 28.5h7" stroke="#f4e9ee" stroke-width="2" stroke-linecap="round"/>
+</svg>

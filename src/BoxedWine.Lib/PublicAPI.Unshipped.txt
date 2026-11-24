@@ -1,0 +1,87 @@
+#nullable enable
+BoxedWine.Lib.BwErrorCodes
+BoxedWine.Lib.BwException
+BoxedWine.Lib.BwException.BwException(string! code, string! message, BoxedWine.Lib.BwProgram? program = null) -> void
+BoxedWine.Lib.BwException.Code.get -> string!
+BoxedWine.Lib.BwException.Program.get -> BoxedWine.Lib.BwProgram?
+BoxedWine.Lib.BwFileType
+BoxedWine.Lib.BwFileType.<Clone>$() -> BoxedWine.Lib.BwFileType!
+BoxedWine.Lib.BwFileType.BwFileType(string! Extension, string! MediaType, bool Execute) -> void
+BoxedWine.Lib.BwFileType.Deconstruct(out string! Extension, out string! MediaType, out bool Execute) -> void
+BoxedWine.Lib.BwFileType.Equals(BoxedWine.Lib.BwFileType? other) -> bool
+BoxedWine.Lib.BwFileType.Execute.get -> bool
+BoxedWine.Lib.BwFileType.Execute.init -> void
+BoxedWine.Lib.BwFileType.Extension.get -> string!
+BoxedWine.Lib.BwFileType.Extension.init -> void
+BoxedWine.Lib.BwFileType.MediaType.get -> string!
+BoxedWine.Lib.BwFileType.MediaType.init -> void
+BoxedWine.Lib.BwLaunch
+BoxedWine.Lib.BwLaunch.<Clone>$() -> BoxedWine.Lib.BwLaunch!
+BoxedWine.Lib.BwLaunch.Arguments.get -> System.Collections.Generic.IReadOnlyList<string!>!
+BoxedWine.Lib.BwLaunch.Arguments.init -> void
+BoxedWine.Lib.BwLaunch.BwLaunch() -> void
+BoxedWine.Lib.BwLaunch.Columns.get -> int
+BoxedWine.Lib.BwLaunch.Columns.init -> void
+BoxedWine.Lib.BwLaunch.Content.get -> System.ReadOnlyMemory<byte>
+BoxedWine.Lib.BwLaunch.Content.init -> void
+BoxedWine.Lib.BwLaunch.Equals(BoxedWine.Lib.BwLaunch? other) -> bool
+BoxedWine.Lib.BwLaunch.FileName.get -> string!
+BoxedWine.Lib.BwLaunch.FileName.init -> void
+BoxedWine.Lib.BwLaunch.Rows.get -> int
+BoxedWine.Lib.BwLaunch.Rows.init -> void
+BoxedWine.Lib.BwLib
+BoxedWine.Lib.BwLib.BwLib(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask<OsX86.Interface.Ix86?>>! x86) -> void
+BoxedWine.Lib.BwLib.FileTypes.get -> System.Collections.Generic.IReadOnlyList<BoxedWine.Lib.BwFileType!>!
+BoxedWine.Lib.BwLib.InspectAsync(string! fileName, System.ReadOnlyMemory<byte> header, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<BoxedWine.Lib.BwProgram!>
+BoxedWine.Lib.BwLib.LaunchAsync(BoxedWine.Lib.BwLaunch! launch, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<OsX86.Interface.IVmConsole!>
+BoxedWine.Lib.BwProgram
+BoxedWine.Lib.BwProgram.<Clone>$() -> BoxedWine.Lib.BwProgram!
+BoxedWine.Lib.BwProgram.BwProgram(string! FileName, OsX86.Interface.ProgramDetection! Detection, BoxedWine.Lib.BwSupport Support) -> void
+BoxedWine.Lib.BwProgram.CanRun.get -> bool
+BoxedWine.Lib.BwProgram.Deconstruct(out string! FileName, out OsX86.Interface.ProgramDetection! Detection, out BoxedWine.Lib.BwSupport Support) -> void
+BoxedWine.Lib.BwProgram.Detection.get -> OsX86.Interface.ProgramDetection!
+BoxedWine.Lib.BwProgram.Detection.init -> void
+BoxedWine.Lib.BwProgram.Equals(BoxedWine.Lib.BwProgram? other) -> bool
+BoxedWine.Lib.BwProgram.FileName.get -> string!
+BoxedWine.Lib.BwProgram.FileName.init -> void
+BoxedWine.Lib.BwProgram.Support.get -> BoxedWine.Lib.BwSupport
+BoxedWine.Lib.BwProgram.Support.init -> void
+BoxedWine.Lib.BwSupport
+BoxedWine.Lib.BwSupport.Batch = 1 -> BoxedWine.Lib.BwSupport
+BoxedWine.Lib.BwSupport.Console = 0 -> BoxedWine.Lib.BwSupport
+BoxedWine.Lib.BwSupport.Dos = 8 -> BoxedWine.Lib.BwSupport
+BoxedWine.Lib.BwSupport.Installer = 3 -> BoxedWine.Lib.BwSupport
+BoxedWine.Lib.BwSupport.Library = 6 -> BoxedWine.Lib.BwSupport
+BoxedWine.Lib.BwSupport.Linux = 9 -> BoxedWine.Lib.BwSupport
+BoxedWine.Lib.BwSupport.Mismatch = 11 -> BoxedWine.Lib.BwSupport
+BoxedWine.Lib.BwSupport.OtherWindows = 7 -> BoxedWine.Lib.BwSupport
+BoxedWine.Lib.BwSupport.Unknown = 10 -> BoxedWine.Lib.BwSupport
+BoxedWine.Lib.BwSupport.Windowed = 2 -> BoxedWine.Lib.BwSupport
+BoxedWine.Lib.BwSupport.Windows16 = 4 -> BoxedWine.Lib.BwSupport
+BoxedWine.Lib.BwSupport.Windows64 = 5 -> BoxedWine.Lib.BwSupport
+BoxedWine.Lib.IBwLib
+BoxedWine.Lib.IBwLib.FileTypes.get -> System.Collections.Generic.IReadOnlyList<BoxedWine.Lib.BwFileType!>!
+BoxedWine.Lib.IBwLib.InspectAsync(string! fileName, System.ReadOnlyMemory<byte> header, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<BoxedWine.Lib.BwProgram!>
+BoxedWine.Lib.IBwLib.LaunchAsync(BoxedWine.Lib.BwLaunch! launch, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<OsX86.Interface.IVmConsole!>
+const BoxedWine.Lib.BwErrorCodes.NotRunnable = "not-runnable" -> string!
+const BoxedWine.Lib.BwErrorCodes.TooLarge = "too-large" -> string!
+const BoxedWine.Lib.BwErrorCodes.X86Missing = "x86-missing" -> string!
+const BoxedWine.Lib.BwLib.HeaderLength = 4096 -> int
+override BoxedWine.Lib.BwFileType.Equals(object? obj) -> bool
+override BoxedWine.Lib.BwFileType.GetHashCode() -> int
+override BoxedWine.Lib.BwFileType.ToString() -> string!
+override BoxedWine.Lib.BwLaunch.Equals(object? obj) -> bool
+override BoxedWine.Lib.BwLaunch.GetHashCode() -> int
+override BoxedWine.Lib.BwLaunch.ToString() -> string!
+override BoxedWine.Lib.BwProgram.Equals(object? obj) -> bool
+override BoxedWine.Lib.BwProgram.GetHashCode() -> int
+override BoxedWine.Lib.BwProgram.ToString() -> string!
+static BoxedWine.Lib.BwFileType.operator !=(BoxedWine.Lib.BwFileType? left, BoxedWine.Lib.BwFileType? right) -> bool
+static BoxedWine.Lib.BwFileType.operator ==(BoxedWine.Lib.BwFileType? left, BoxedWine.Lib.BwFileType? right) -> bool
+static BoxedWine.Lib.BwLaunch.operator !=(BoxedWine.Lib.BwLaunch? left, BoxedWine.Lib.BwLaunch? right) -> bool
+static BoxedWine.Lib.BwLaunch.operator ==(BoxedWine.Lib.BwLaunch? left, BoxedWine.Lib.BwLaunch? right) -> bool
+static BoxedWine.Lib.BwLib.Classify(OsX86.Interface.ProgramDetection! detection) -> BoxedWine.Lib.BwSupport
+static BoxedWine.Lib.BwLib.HandledFileTypes.get -> System.Collections.Generic.IReadOnlyList<BoxedWine.Lib.BwFileType!>!
+static BoxedWine.Lib.BwLib.IsHandled(string? fileName) -> bool
+static BoxedWine.Lib.BwProgram.operator !=(BoxedWine.Lib.BwProgram? left, BoxedWine.Lib.BwProgram? right) -> bool
+static BoxedWine.Lib.BwProgram.operator ==(BoxedWine.Lib.BwProgram? left, BoxedWine.Lib.BwProgram? right) -> bool

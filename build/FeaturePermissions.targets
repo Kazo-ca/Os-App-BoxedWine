@@ -1,0 +1,66 @@
+<Project>
+  <!--
+    Temporary workaround (question 321), to remove once Kazo is fixed.
+
+    ADR 0246 of Kazo: an app declares the permission of a feature it depends on in its capabilities
+    (BoxedWine: x86.programs.launch of Os-x86, required by Ix86.RunProgramAsync). The validator
+    accepts it when the app declares a dependency, but the manifest generator of Kazo 3.5.2 (also
+    3.6.0-preview.1, main and feature/base) builds its check catalog with the dependencies removed
+    (Tools/Kazo.Os.Tools.ManifestGenerator/AppDefinitionInspector.cs, CheckEntryPointKinds), so it
+    refuses the permission (KOSAPP0009) and no client app of a feature can build.
+
+    Until then, BoxedWineApp does not list the permission; this target adds every item of
+    @(BoxedWineFeaturePermission) to the capabilities of the manifest.json the generator just wrote,
+    keeping them sorted as the generator does. Kazo reads the manifest from this file, never from the
+    C# class, and validates it again (with its dependencies) when it builds a catalog or installs the
+    package. ManifestTests checks the result.
+  -->
+  <ItemGroup>
+    <BoxedWineFeaturePermission Include="x86.programs.launch" />
+  </ItemGroup>
+
+  <UsingTask TaskName="BoxedWineAddCapabilities" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <ManifestPath ParameterType="System.String" Required="true" />
+      <Capabilities ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Linq" />
+      <Using Namespace="System.Text.RegularExpressions" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        // The generator writes compact JSON with "capabilities" as an array of plain identifiers
+        // (lowercase letters, digits, dots, dashes, colons): no escape to handle.
+        string text = File.ReadAllText(ManifestPath);
+        var array = new Regex(@"""capabilities"":\[(?<items>[^\]]*)\]");
+        Match match = array.Match(text);
+        if (!match.Success)
+        {
+          Log.LogError("BoxedWine: no capabilities array in " + ManifestPath + ".");
+          return false;
+        }
+
+        string[] merged = Regex.Matches(match.Groups["items"].Value, "\"(?<id>[^\"]*)\"")
+          .Cast<Match>()
+          .Select(item => item.Groups["id"].Value)
+          .Concat(Capabilities.Select(item => item.ItemSpec))
+          .Distinct(StringComparer.Ordinal)
+          .OrderBy(capability => capability, StringComparer.Ordinal)
+          .ToArray();
+        string replaced = "\"capabilities\":[" + string.Join(",", merged.Select(capability => "\"" + capability + "\"")) + "]";
+        string updated = text.Substring(0, match.Index) + replaced + text.Substring(match.Index + match.Length);
+        if (updated != text)
+        {
+          File.WriteAllText(ManifestPath, updated);
+        }
+      ]]></Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="BoxedWineAddFeaturePermissions"
+          AfterTargets="GenerateKazoOsAppManifests"
+          Condition="'$(KazoOsAppProject)' == 'true' and Exists('$(MSBuildProjectDirectory)/manifest.json')">
+    <BoxedWineAddCapabilities ManifestPath="$(MSBuildProjectDirectory)/manifest.json" Capabilities="@(BoxedWineFeaturePermission)" />
+  </Target>
+</Project>

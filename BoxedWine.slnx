@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/external/">
+    <!-- The contracts Ix86 (question 320): in the solution so that it builds with the solution's configuration. -->
+    <Project Path="external/Os-x86/src/OsX86.Interface/OsX86.Interface.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/BoxedWine.Lib/BoxedWine.Lib.csproj" />
+    <Project Path="src/BoxedWine/BoxedWine.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/BoxedWine.Tests/BoxedWine.Tests.csproj" />
+  </Folder>
+</Solution>

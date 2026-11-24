@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Button.Done" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="Button.Interrupt" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="Button.Interrupt.Tooltip" xml:space="preserve">
+    <value>Sends Ctrl+C to the program</value>
+  </data>
+  <data name="Button.Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="Button.Open" xml:space="preserve">
+    <value>Open a program…</value>
+  </data>
+  <data name="Button.Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="Button.Send" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="Button.Tutorial" xml:space="preserve">
+    <value>Tutorial</value>
+  </data>
+  <data name="Console.AriaLabel" xml:space="preserve">
+    <value>Output of the program</value>
+  </data>
+  <data name="Console.Hint" xml:space="preserve">
+    <value>Closing the window ends the program.</value>
+  </data>
+  <data name="Console.Input.AriaLabel" xml:space="preserve">
+    <value>Line to send to the program</value>
+  </data>
+  <data name="Console.Input.Placeholder" xml:space="preserve">
+    <value>Type a line, then Enter</value>
+  </data>
+  <data name="Dialog.Open.Title" xml:space="preserve">
+    <value>Open a program</value>
+  </data>
+  <data name="Failure.Detail" xml:space="preserve">
+    <value>Detail: {0}</value>
+  </data>
+  <data name="Failure.Lost" xml:space="preserve">
+    <value>The virtual machine stopped while the program was running.</value>
+  </data>
+  <data name="Failure.MemoryBudget" xml:space="preserve">
+    <value>The machine does not have enough free memory to start another virtual machine. Close a program of Os-x86, then try again.</value>
+  </data>
+  <data name="Failure.NotRunnable" xml:space="preserve">
+    <value>This program cannot be launched yet.</value>
+  </data>
+  <data name="Failure.PermissionDenied" xml:space="preserve">
+    <value>BoxedWine is not allowed to launch programs in Os-x86. You can give the permission back in Settings ▸ Permissions.</value>
+  </data>
+  <data name="Failure.ReadFailed" xml:space="preserve">
+    <value>The file could not be read.</value>
+  </data>
+  <data name="Failure.TooLarge" xml:space="preserve">
+    <value>This program is larger than 256 MiB, the size Os-x86 copies into a virtual machine.</value>
+  </data>
+  <data name="Failure.X86Error" xml:space="preserve">
+    <value>Os-x86 could not launch this program.</value>
+  </data>
+  <data name="Failure.X86Missing" xml:space="preserve">
+    <value>Os-x86 is not installed or is disabled: BoxedWine launches programs through it. Ask an administrator to install it.</value>
+  </data>
+  <data name="Filter.Programs" xml:space="preserve">
+    <value>Windows and DOS programs</value>
+  </data>
+  <data name="Home.Body" xml:space="preserve">
+    <value>BoxedWine opens Windows programs (.exe, .bat, .cmd, .msi) and DOS programs (.com). They run in a virtual machine of Os-x86, never in Kazo OS itself.
+
+Double-click a program in the File Explorer, or choose “Open a program…”.</value>
+  </data>
+  <data name="Home.Heading" xml:space="preserve">
+    <value>BoxedWine</value>
+  </data>
+  <data name="Status.Exited" xml:space="preserve">
+    <value>{0} ended with code {1}.</value>
+  </data>
+  <data name="Status.Failed" xml:space="preserve">
+    <value>{0} was not launched.</value>
+  </data>
+  <data name="Status.Preparing" xml:space="preserve">
+    <value>Reading {0}…</value>
+  </data>
+  <data name="Status.Running" xml:space="preserve">
+    <value>{0} is running</value>
+  </data>
+  <data name="Status.Starting" xml:space="preserve">
+    <value>Starting {0} in Os-x86… The first time, Os-x86 downloads its image: this can take a minute.</value>
+  </data>
+  <data name="Support.Batch" xml:space="preserve">
+    <value>Windows batch file.</value>
+  </data>
+  <data name="Support.Console" xml:space="preserve">
+    <value>Windows console program.</value>
+  </data>
+  <data name="Support.Dos" xml:space="preserve">
+    <value>This is a DOS program. For now, launch it from the Terminal with “x86 run &lt;file&gt;”: Os-x86 shows it in the terminal. BoxedWine will show DOS programs in a later version.</value>
+  </data>
+  <data name="Support.Installer" xml:space="preserve">
+    <value>This is a Windows Installer package (.msi). Installers need a display, which comes in a later version of BoxedWine.</value>
+  </data>
+  <data name="Support.Library" xml:space="preserve">
+    <value>This is a Windows library (DLL), not a program.</value>
+  </data>
+  <data name="Support.Linux" xml:space="preserve">
+    <value>This is a Linux program. Run it in a Linux virtual machine of Os-x86, with “x86 shell” in the Terminal.</value>
+  </data>
+  <data name="Support.Mismatch" xml:space="preserve">
+    <value>The content of the file does not match its extension: BoxedWine refuses to launch it.</value>
+  </data>
+  <data name="Support.OtherWindows" xml:space="preserve">
+    <value>This Windows program is not made for a 32-bit x86 processor, or neither for the console nor for a window.</value>
+  </data>
+  <data name="Support.Unknown" xml:space="preserve">
+    <value>Os-x86 does not recognize this file as a program.</value>
+  </data>
+  <data name="Support.Windowed" xml:space="preserve">
+    <value>This is a windowed Windows program. For now BoxedWine launches console programs; showing Windows windows comes in a later version.</value>
+  </data>
+  <data name="Support.Windows16" xml:space="preserve">
+    <value>This is a 16-bit Windows program. It needs a display, which comes in a later version of BoxedWine.</value>
+  </data>
+  <data name="Support.Windows64" xml:space="preserve">
+    <value>This is a 64-bit Windows program: the processor Os-x86 emulates is 32-bit, it cannot run it.</value>
+  </data>
+  <data name="Toolbar.AriaLabel" xml:space="preserve">
+    <value>BoxedWine actions</value>
+  </data>
+  <data name="Tutorial.Step1.Body" xml:space="preserve">
+    <value>BoxedWine opens Windows programs (.exe, .bat, .cmd, .msi) and DOS programs (.com) in Kazo OS.
+
+The programs do not run in Kazo itself: Os-x86 runs them in a virtual machine, with its own permissions. BoxedWine is the window that shows them.</value>
+  </data>
+  <data name="Tutorial.Step1.Title" xml:space="preserve">
+    <value>Welcome to BoxedWine</value>
+  </data>
+  <data name="Tutorial.Step2.Body" xml:space="preserve">
+    <value>Double-click an .exe file in the File Explorer, choose “Open with ▸ BoxedWine”, or open it from the Terminal with “xdg-open ./setup.exe”. The “Open a program…” button does the same.
+
+For now BoxedWine launches console programs: their output shows in the window, and you write to them in the bottom line. Ctrl+C interrupts the program; closing the window ends it. The first time, Os-x86 downloads its Windows image: starting then takes a minute.</value>
+  </data>
+  <data name="Tutorial.Step2.Title" xml:space="preserve">
+    <value>Launch a program</value>
+  </data>
+  <data name="Tutorial.Step3.Body" xml:space="preserve">
+    <value>BoxedWine does not look for the programs you install by itself: you add them yourself.
+
+The “Add an application to Kazo OS” menu will let you choose the executable or the shortcut (.lnk) of an installed program. It will get an entry in the Start menu and, if you want, a shortcut on the desktop. This menu comes in a later version; until then, keep your programs in your files and open them with a double-click.
+
+You can see this tutorial again with the “Tutorial” button.</value>
+  </data>
+  <data name="Tutorial.Step3.Title" xml:space="preserve">
+    <value>Add your programs to Kazo OS</value>
+  </data>
+  <data name="Tutorial.StepCount" xml:space="preserve">
+    <value>Step {0} of {1}</value>
+  </data>
+</root>
